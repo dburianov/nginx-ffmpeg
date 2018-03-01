@@ -57,9 +57,9 @@ RUN apt-get update \
     --add-module=/usr/src/naxsi/naxsi_src \
     --add-module=/usr/src/nginx-vod-module \
     && make -j$(nproc) && make install \
-    && rm -rf /usr/src/* \
+    && rm -rf /usr/src/* 
 
-    && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
+RUN mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
     && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.02.tar.bz2 \
     && tar xjvf nasm-2.13.02.tar.bz2 \

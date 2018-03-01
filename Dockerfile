@@ -116,7 +116,7 @@ RUN mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
 
     && cd /usr/src/ffmpeg_sources \
     && wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 \
-    && tar xjvf ffmpeg.tar.bz2 \
+    && tar xjvf ffmpeg-3.4.2.tar.bz2 \
     && cd ffmpeg-3.4.2 \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="/usr/ffmpeg_build" \

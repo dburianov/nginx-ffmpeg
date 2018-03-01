@@ -139,7 +139,7 @@ RUN apt-get update \
     --enable-nonfree \
     --enable-filter=movie --enable-filter=drawtext --enable-libfreetype --enable-filter=overlay --enable-filter=yadif && \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
-    && hash -r
+    && hash -r \
 
     && rm -rf /usr/src/*
 

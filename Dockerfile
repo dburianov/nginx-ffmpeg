@@ -68,7 +68,7 @@ RUN mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && wget -O yasm-1.3.0.tar.gz http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz \
@@ -77,7 +77,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
@@ -85,7 +85,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
     && PATH="/usr.bin:$PATH" make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && if cd x265 2> /dev/null; then hg pull && hg update; else hg clone https://bitbucket.org/multicoreware/x265; fi \
@@ -93,7 +93,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && PATH="/usr/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="/usr/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && git -C libvpx pull 2> /dev/null || git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git \
@@ -101,7 +101,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && git -C fdk-aac pull 2> /dev/null || git clone --depth 1 https://github.com/mstorsjo/fdk-aac \
@@ -110,7 +110,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && ./configure --prefix="/usr/ffmpeg_build" --disable-shared \
     && make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz \
@@ -119,7 +119,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --disable-shared --enable-nasm \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && git -C opus pull 2> /dev/null || git clone --depth 1 https://github.com/xiph/opus.git \
@@ -128,7 +128,7 @@ RUN cd /usr/src/ffmpeg_sources \
     && ./configure --prefix="/usr/ffmpeg_build" --disable-shared \
     && make -j$(nproc) && make install \
 
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/ffmpeg_sources/* 
 
 RUN cd /usr/src/ffmpeg_sources \
     && wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 \

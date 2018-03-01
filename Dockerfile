@@ -31,17 +31,17 @@ RUN apt-get update \
     && git clone git://github.com/vozlt/nginx-module-vts.git /usr/src/nginx-module-vts \
     && git clone https://github.com/nbs-system/naxsi.git /usr/src/naxsi \
     && git clone https://github.com/kaltura/nginx-vod-module.git /usr/src/nginx-vod-module \
+    && git clone https://github.com/arut/nginx-rtmp-module.git /usr/src/nginx-rtmp-module \
+    && git clone https://github.com/arut/nginx-ts-module.git /usr/src/nginx-ts-module \
 
-    && cd /usr/src/luajit-2.0 && make && make install && cd .. \
+    && cd /usr/src/luajit-2.0 && make -j$(nproc) && make install && cd .. \
     && export LUAJIT_LIB=/usr/local/lib \
     && export LUAJIT_INC=/usr/local/include/luajit-2.0 \
 
     && ldconfig \
 
-    && git clone https://github.com/arut/nginx-rtmp-module.git /usr/src/nginx-rtmp-module \
-    && git clone https://github.com/arut/nginx-ts-module.git /usr/src/nginx-ts-module \
     && cd /usr/src/ && hg clone http://hg.nginx.org/nginx \
-    && cd /usr/src/nginx && ./configure --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
+    && cd /usr/src/nginx && cp ./auto/configure . && ./configure --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
 	--with-http_secure_link_module --with-http_dav_module \
 	--with-http_geoip_module --with-http_image_filter_module \
 	--with-mail --with-mail_ssl_module --with-google_perftools_module \

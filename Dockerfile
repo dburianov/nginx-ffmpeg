@@ -75,10 +75,10 @@ RUN mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
 
-    && cd /usr/src/ffmpeg_sources && \
-    && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 && \
-    && cd x264 && \
-    && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static && \
+    && cd /usr/src/ffmpeg_sources \
+    && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
+    && cd x264 \
+    && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
     && PATH="/usr.bin:$PATH" make -j$(nproc) && make install \
 
     && cd /usr/src/ffmpeg_sources \
@@ -137,7 +137,7 @@ RUN mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     --enable-libx264 \
     --enable-libx265 \
     --enable-nonfree \
-    --enable-filter=movie --enable-filter=drawtext --enable-libfreetype --enable-filter=overlay --enable-filter=yadif && \
+    --enable-filter=movie --enable-filter=drawtext --enable-libfreetype --enable-filter=overlay --enable-filter=yadif \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
     && hash -r \
 

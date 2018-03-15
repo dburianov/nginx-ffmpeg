@@ -47,7 +47,7 @@ RUN apt-get update \
 	--with-mail --with-mail_ssl_module --with-google_perftools_module \
 	--with-debug --with-pcre-jit --with-ipv6 --with-http_stub_status_module --with-http_realip_module \
 	--with-http_addition_module --with-http_gzip_static_module --with-http_sub_module \
-    --with-stream \
+    --with-stream --with-http_v2_module \
 	--add-module=/usr/src/nginx-rtmp-module \
 	--add-module=/usr/src/ngx_devel_kit \
 	--add-module=/usr/src/lua-nginx-module \

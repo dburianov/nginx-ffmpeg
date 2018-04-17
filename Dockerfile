@@ -41,7 +41,8 @@ RUN apt-get update \
     && ldconfig \
 
     && cd /usr/src/ && hg clone http://hg.nginx.org/nginx \
-    && cd /usr/src/nginx && cp ./auto/configure . && ./configure --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
+    && cd /usr/src/nginx && cp ./auto/configure . && ./configure \
+    --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
 	--with-http_secure_link_module --with-http_dav_module \
 	--with-http_geoip_module --with-http_image_filter_module \
 	--with-mail --with-mail_ssl_module --with-google_perftools_module \

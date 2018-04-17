@@ -156,7 +156,7 @@ RUN apt-get update \
     --enable-nonfree \
     --enable-filter=movie --enable-filter=drawtext --enable-libfreetype --enable-filter=overlay --enable-filter=yadif \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
-    && ls -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ls -s /usr/bin/ffprob /usr/local/bin/ffprob \
+    && ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob \
     && hash -r \
 
     && rm -rf /usr/src/*

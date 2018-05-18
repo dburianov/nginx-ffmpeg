@@ -1,10 +1,9 @@
 FROM ubuntu:16.04
 #FROM ubuntu-nginx-aptget-install-req
 ENV DEBIAN_FRONTEND noninteractive
-
 ENV TZ=Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
+#--with-http_perl_module
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
@@ -44,7 +43,7 @@ RUN apt-get update \
     && cd ModSecurity && git submodule init && git submodule update \
     && ./build.sh && ./configure && make -j$(nproc) && make install \
     && cd /usr/src && git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git \
-
+    && echo "Compiling Nginx" \
     && cd /usr/src/ && hg clone http://hg.nginx.org/nginx \
     && cd /usr/src/ && hg clone http://hg.nginx.org/njs \
     && cd /usr/src/nginx && cp ./auto/configure . && ./configure \
@@ -55,7 +54,7 @@ RUN apt-get update \
 	--with-debug --with-pcre-jit --with-ipv6 --with-http_stub_status_module --with-http_realip_module \
 	--with-http_addition_module --with-http_gzip_static_module --with-http_sub_module \
     --with-stream --with-stream_geoip_module --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
-    --with-http_random_index_module --with-http_perl_module --with-http_gunzip_module \
+    --with-http_random_index_module --with-http_gunzip_module \
     --with-http_v2_module --with-http_slice_module\
 	--add-module=/usr/src/nginx-rtmp-module \
 	--add-module=/usr/src/ngx_devel_kit \
@@ -69,7 +68,7 @@ RUN apt-get update \
     --add-module=/usr/src/ModSecurity-nginx \
     && make -j$(nproc) && make install \
     && rm -rf /usr/src/* \
-
+    && echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
     && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.02.tar.bz2 \
@@ -78,69 +77,53 @@ RUN apt-get update \
     && ./autogen.sh \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling yasm" \
     && cd /usr/src/ffmpeg_sources \
     && wget -O yasm-1.3.0.tar.gz http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz \
     && tar xzvf yasm-1.3.0.tar.gz \
     && cd yasm-1.3.0 \
     && ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling x264" \
     && cd /usr/src/ffmpeg_sources \
     && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
     && cd x264 \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
     && PATH="/usr.bin:$PATH" make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling x265" \
     && cd /usr/src/ffmpeg_sources \
     && if cd x265 2> /dev/null; then hg pull && hg update; else hg clone https://bitbucket.org/multicoreware/x265; fi \
     && cd x265/build/linux \
     && PATH="/usr/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="/usr/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling libvpx" \
     && cd /usr/src/ffmpeg_sources \
     && git -C libvpx pull 2> /dev/null || git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git \
     && cd libvpx \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling fdkaac" \
     && cd /usr/src/ffmpeg_sources \
     && git -C fdk-aac pull 2> /dev/null || git clone --depth 1 https://github.com/mstorsjo/fdk-aac \
     && cd fdk-aac \
     && autoreconf -fiv \
     && ./configure --prefix="/usr/ffmpeg_build" --disable-shared \
     && make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling lame" \
     && cd /usr/src/ffmpeg_sources \
     && wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz \
     && tar xzvf lame-3.100.tar.gz \
     && cd lame-3.100 \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --disable-shared --enable-nasm \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling opus" \
     && cd /usr/src/ffmpeg_sources \
     && git -C opus pull 2> /dev/null || git clone --depth 1 https://github.com/xiph/opus.git \
     && cd opus \
     && ./autogen.sh \
     && ./configure --prefix="/usr/ffmpeg_build" --disable-shared \
     && make -j$(nproc) && make install \
-
-    && rm -rf /usr/src/ffmpeg_sources/* \
-
+    && echo "Compiling ffmpeg" \
     && cd /usr/src/ffmpeg_sources \
     && wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 \
     && tar xjvf ffmpeg-3.4.2.tar.bz2 \

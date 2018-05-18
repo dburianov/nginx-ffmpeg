@@ -18,7 +18,7 @@ RUN apt-get update \
     autoconf automake cmake libass-dev libfreetype6-dev \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
-    pkg-config texinfo zlib1g-dev \
+    pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev \
 
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
@@ -40,15 +40,23 @@ RUN apt-get update \
 
     && ldconfig \
 
+    && cd /usr/src && git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity \
+    && cd ModSecurity && git submodule init && git submodule update \
+    && ./build.sh && ./configure && make -j$(nproc) && make install \
+    && cd /usr/src && git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git \
+
     && cd /usr/src/ && hg clone http://hg.nginx.org/nginx \
+    && cd /usr/src/ && hg clone http://hg.nginx.org/njs \
     && cd /usr/src/nginx && cp ./auto/configure . && ./configure \
     --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
-	--with-http_secure_link_module --with-http_dav_module \
+	--with-http_secure_link_module --with-http_dav_module --with-http_auth_request_module\
 	--with-http_geoip_module --with-http_image_filter_module \
 	--with-mail --with-mail_ssl_module --with-google_perftools_module \
 	--with-debug --with-pcre-jit --with-ipv6 --with-http_stub_status_module --with-http_realip_module \
 	--with-http_addition_module --with-http_gzip_static_module --with-http_sub_module \
-    --with-stream --with-http_v2_module \
+    --with-stream --with-stream_geoip_module --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
+    --with-http_random_index_module --with-http_perl_module --with-http_gunzip_module \
+    --with-http_v2_module --with-http_slice_module\
 	--add-module=/usr/src/nginx-rtmp-module \
 	--add-module=/usr/src/ngx_devel_kit \
 	--add-module=/usr/src/lua-nginx-module \
@@ -57,6 +65,8 @@ RUN apt-get update \
     --add-module=/usr/src/nginx-module-vts \
     --add-module=/usr/src/naxsi/naxsi_src \
     --add-module=/usr/src/nginx-vod-module \
+    --add-module=/usr/src/njs/nginx \
+    --add-module=/usr/src/ModSecurity-nginx \
     && make -j$(nproc) && make install \
     && rm -rf /usr/src/* \
 

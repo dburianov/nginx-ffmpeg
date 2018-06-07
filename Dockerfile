@@ -18,11 +18,9 @@ RUN apt-get update \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
     pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev \
-
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
     && rm -rf /usr/share/man/* \
-
     && git clone http://luajit.org/git/luajit-2.0.git /usr/src/luajit-2.0 \
     && git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit \
     && git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module \
@@ -32,13 +30,12 @@ RUN apt-get update \
     && git clone https://github.com/kaltura/nginx-vod-module.git /usr/src/nginx-vod-module \
     && git clone https://github.com/arut/nginx-rtmp-module.git /usr/src/nginx-rtmp-module \
     && git clone https://github.com/arut/nginx-ts-module.git /usr/src/nginx-ts-module \
-
+    && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && cd /usr/src/luajit-2.0 && make -j$(nproc) && make install && cd .. \
     && export LUAJIT_LIB=/usr/local/lib \
     && export LUAJIT_INC=/usr/local/include/luajit-2.0 \
-
     && ldconfig \
-
+    && echo "Compiling ModSecurity" \
     && cd /usr/src && git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity \
     && cd ModSecurity && git submodule init && git submodule update \
     && ./build.sh && ./configure && make -j$(nproc) && make install \
@@ -66,6 +63,7 @@ RUN apt-get update \
     --add-module=/usr/src/nginx-vod-module \
     --add-module=/usr/src/njs/nginx \
     --add-module=/usr/src/ModSecurity-nginx \
+    --add-module=/usr/src/headers-more-nginx-module \
     && make -j$(nproc) && make install \
     && rm -rf /usr/src/* \
     && echo "Compiling nasm" \
@@ -151,7 +149,6 @@ RUN apt-get update \
     && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
     && ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob \
     && hash -r \
-
     && rm -rf /usr/src/*
 
 EXPOSE 80

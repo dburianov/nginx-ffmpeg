@@ -87,7 +87,7 @@ RUN apt-get update \
     && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
     && cd x264 \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
-    && PATH="/usr.bin:$PATH" make -j$(nproc) && make install \
+    && PATH="/usr/bin:$PATH" make -j$(nproc) && make install \
     && echo "Compiling x265" \
     && cd /usr/src/ffmpeg_sources \
     && if cd x265 2> /dev/null; then hg pull && hg update; else hg clone https://bitbucket.org/multicoreware/x265; fi \

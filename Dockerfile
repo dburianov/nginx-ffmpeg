@@ -31,6 +31,8 @@ RUN apt-get update \
     && git clone https://github.com/arut/nginx-rtmp-module.git /usr/src/nginx-rtmp-module \
     && git clone https://github.com/arut/nginx-ts-module.git /usr/src/nginx-ts-module \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
+    && git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module \
+    && git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module \
     && cd /usr/src/luajit-2.0 && make -j$(nproc) && make install && cd .. \
     && export LUAJIT_LIB=/usr/local/lib \
     && export LUAJIT_INC=/usr/local/include/luajit-2.0 \
@@ -64,6 +66,8 @@ RUN apt-get update \
     --add-module=/usr/src/njs/nginx \
     --add-module=/usr/src/ModSecurity-nginx \
     --add-module=/usr/src/headers-more-nginx-module \
+    --add-module=/usr/src/ngx_http_dyups_module \
+    --add-module=/usr/src/lua-upstream-nginx-module \
     && make -j$(nproc) && make install \
     && rm -rf /usr/src/* \
     && echo "Compiling nasm" \

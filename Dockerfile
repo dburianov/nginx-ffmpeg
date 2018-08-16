@@ -73,9 +73,9 @@ RUN apt-get update \
     && echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
-    && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.02.tar.bz2 \
-    && tar xjvf nasm-2.13.02.tar.bz2 \
-    && cd nasm-2.13.02 \
+    && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.03.tar.bz2 \
+    && tar xjvf nasm-2.13.03.tar.bz2 \
+    && cd nasm-2.13.03 \
     && ./autogen.sh \
     && PATH="/usr/bin:$PATH" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" \
     && make -j$(nproc) && make install \
@@ -127,9 +127,8 @@ RUN apt-get update \
     && make -j$(nproc) && make install \
     && echo "Compiling ffmpeg" \
     && cd /usr/src/ffmpeg_sources \
-    && wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 \
-    && tar xjvf ffmpeg-3.4.2.tar.bz2 \
-    && cd ffmpeg-3.4.2 \
+    && git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+    && cd ffmpeg \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="/usr/ffmpeg_build" \
     --pkg-config-flags="--static" \

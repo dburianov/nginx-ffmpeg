@@ -73,7 +73,7 @@ RUN apt-get update \
     && echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
-    && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.03.tar.bz2 \
+    && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.bz2 \
     && tar xjvf nasm-2.13.03.tar.bz2 \
     && cd nasm-2.13.03 \
     && ./autogen.sh \

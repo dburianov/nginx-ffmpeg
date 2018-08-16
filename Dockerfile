@@ -127,7 +127,7 @@ RUN apt-get update \
     && make -j$(nproc) && make install \
     && echo "Compiling ffmpeg" \
     && cd /usr/src/ffmpeg_sources \
-    && git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+    && git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg \
     && cd ffmpeg \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="/usr/ffmpeg_build" \

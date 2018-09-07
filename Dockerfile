@@ -13,7 +13,7 @@ RUN apt-get update \
 	libxslt1-dev libgd2-xpm-dev libgeoip-dev \
 	libpam-dev libgoogle-perftools-dev lua5.1 liblua5.1-0 \
 	liblua5.1-0-dev checkinstall wget libssl-dev \
-    mercurial meld \
+    mercurial meld openssh-server \
     autoconf automake cmake libass-dev libfreetype6-dev \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
@@ -69,8 +69,9 @@ RUN apt-get update \
     --add-module=/usr/src/ngx_http_dyups_module \
     --add-module=/usr/src/lua-upstream-nginx-module \
     && make -j$(nproc) && make install \
-    && rm -rf /usr/src/* \
-    && echo "Compiling nasm" \
+    && rm -rf /usr/src/* 
+
+RUN echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
     && wget http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.bz2 \

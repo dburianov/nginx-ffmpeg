@@ -68,7 +68,7 @@ cd /usr/src/nginx && cp ./auto/configure . && ./configure \
 
 make -j$(nproc) && make install 
 
-exit 0
+# exit 0
 
 echo "Compiling nasm" 
 mkdir -p /usr/src/ffmpeg_sources /usr/src/bin 
@@ -135,9 +135,11 @@ make -j$(nproc) && make install
 
 echo "Compiling ffmpeg" 
 cd /usr/src/ffmpeg_sources 
-wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 
-tar xjvf ffmpeg-3.4.2.tar.bz2 
-cd ffmpeg-3.4.2 
+#wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 
+#tar xjvf ffmpeg-3.4.2.tar.bz2 
+#cd ffmpeg-3.4.2 
+git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg 
+cd ffmpeg 
 PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure 
     --prefix="/usr/ffmpeg_build" 
     --pkg-config-flags="--static" 
@@ -159,5 +161,5 @@ PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./config
     --enable-nonfree 
     --enable-filter=movie --enable-filter=drawtext --enable-libfreetype --enable-filter=overlay --enable-filter=yadif 
 PATH="/usr/bin:$PATH" make -j$(nproc) && make install 
-ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob 
+#ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob 
 hash -r 

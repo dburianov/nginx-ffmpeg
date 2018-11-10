@@ -51,7 +51,7 @@ make -j$(nproc)
 make install 
 cd /usr/src 
 git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git 
-echo "Compiling Nginx" \
+echo "Compiling Nginx" 
 cd /usr/src/ 
 hg clone http://hg.nginx.org/nginx 
 hg clone http://hg.nginx.org/njs 
@@ -59,7 +59,7 @@ cd /usr/src/nginx
 cp ./auto/configure . 
 ./configure \
     --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
-	--with-http_secure_link_module --with-http_dav_module --with-http_auth_request_module\
+	--with-http_secure_link_module --with-http_dav_module --with-http_auth_request_module \
 	--with-http_geoip_module --with-http_image_filter_module \
 	--with-mail --with-mail_ssl_module --with-google_perftools_module \
 	--with-debug --with-pcre-jit --with-ipv6 --with-http_stub_status_module --with-http_realip_module \

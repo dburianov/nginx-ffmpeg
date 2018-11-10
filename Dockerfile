@@ -62,15 +62,35 @@ RUN apt-get update \
     && cd /usr/src/nginx \
     && cp ./auto/configure . \
     && ./configure \
-    --with-http_xslt_module --with-http_ssl_module --with-http_mp4_module --with-http_flv_module \
-	--with-http_secure_link_module --with-http_dav_module --with-http_auth_request_module\
-	--with-http_geoip_module --with-http_image_filter_module \
-	--with-mail --with-mail_ssl_module --with-google_perftools_module \
-	--with-debug --with-pcre-jit --with-ipv6 --with-http_stub_status_module --with-http_realip_module \
-	--with-http_addition_module --with-http_gzip_static_module --with-http_sub_module \
-    --with-stream --with-stream_geoip_module --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
-    --with-http_random_index_module --with-http_gunzip_module \
-    --with-http_v2_module --with-http_slice_module\
+    --with-http_xslt_module \
+    --with-http_ssl_module \
+    --with-http_mp4_module \
+    --with-http_flv_module \
+	--with-http_secure_link_module \
+    --with-http_dav_module \
+    --with-http_auth_request_module\
+	--with-http_geoip_module \
+    --with-http_image_filter_module \
+	--with-mail \
+    --with-mail_ssl_module \
+    --with-google_perftools_module \
+	--with-debug \
+    --with-pcre-jit \
+    --with-ipv6 \
+    --with-http_stub_status_module \
+    --with-http_realip_module \
+	--with-http_addition_module \
+    --with-http_gzip_static_module \
+    --with-http_sub_module \
+    --with-stream \
+    --with-stream_geoip_module \
+    --with-stream_realip_module \
+    --with-stream_ssl_module \
+    --with-stream_ssl_preread_module \
+    --with-http_random_index_module \
+    --with-http_gunzip_module \
+    --with-http_v2_module \
+    --with-http_slice_module \
 	--add-module=/usr/src/nginx-rtmp-module \
 	--add-module=/usr/src/ngx_devel_kit \
 	--add-module=/usr/src/lua-nginx-module \

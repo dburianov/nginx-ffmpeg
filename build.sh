@@ -22,8 +22,8 @@ git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit
 git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module 
 git clone https://github.com/openresty/echo-nginx-module.git /usr/src/echo-nginx-module 
 git clone https://github.com/vozlt/nginx-module-vts.git /usr/src/nginx-module-vts 
-git clone https://github.com/vozlt/nginx-module-stream-sts.git /usr/src/nginx-module-stream-sts \
-git clone https://github.com/vozlt/nginx-module-sts.git /usr/src/nginx-module-sts \
+git clone https://github.com/vozlt/nginx-module-stream-sts.git /usr/src/nginx-module-stream-sts 
+git clone https://github.com/vozlt/nginx-module-sts.git /usr/src/nginx-module-sts 
 git clone https://github.com/nbs-system/naxsi.git /usr/src/naxsi 
 git clone https://github.com/kaltura/nginx-vod-module.git /usr/src/nginx-vod-module 
 git clone https://github.com/arut/nginx-rtmp-module.git /usr/src/nginx-rtmp-module 

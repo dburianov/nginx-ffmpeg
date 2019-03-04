@@ -174,6 +174,14 @@ RUN echo "Compiling nasm" \
     && ./configure --prefix="/usr/ffmpeg_build" --disable-shared \
     && make -j$(nproc) \
     && make install \
+    && echo "Compiling aom" \
+    && cd ~/ffmpeg_sources \
+    && git -C aom pull 2> /dev/null || git clone --depth 1 https://aomedia.googlesource.com/aom \
+    && mkdir -p aom_build \
+    && cd aom_build \
+    && PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="/usr/ffmpeg_build" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom \
+    && PATH="$HOME/bin:$PATH" make  -j$(nproc) \
+    && make install \
     && echo "Compiling ffmpeg" \
     && cd /usr/src/ffmpeg_sources \
     && git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg \
@@ -186,6 +194,7 @@ RUN echo "Compiling nasm" \
     --extra-libs="-lpthread -lm" \
     --bindir="/usr/bin" \
     --enable-gpl \
+    --enable-libaom \
     --enable-libass \
     --enable-libfdk-aac \
     --enable-libfreetype \

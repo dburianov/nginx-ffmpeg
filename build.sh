@@ -180,6 +180,15 @@ cd opus
 make -j$(nproc) 
 make install 
 
+echo "Compiling aom"
+cd ~/ffmpeg_sources && \
+git -C aom pull 2> /dev/null || git clone --depth 1 https://aomedia.googlesource.com/aom && \
+mkdir -p aom_build && \
+cd aom_build && \
+PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="/usr/ffmpeg_build" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom && \
+PATH="$HOME/bin:$PATH" make  -j$(nproc) && \
+make install
+
 echo "Compiling ffmpeg" 
 cd /usr/src/ffmpeg_sources 
 #wget -O ffmpeg-3.4.2.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2 
@@ -187,33 +196,34 @@ cd /usr/src/ffmpeg_sources
 #cd ffmpeg-3.4.2 
 git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg 
 cd ffmpeg 
-PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure 
-    --prefix="/usr/ffmpeg_build" 
-    --pkg-config-flags="--static" 
-    --extra-cflags="-I/usr/ffmpeg_build/include" 
-    --extra-ldflags="-L/usr/ffmpeg_build/lib" 
-    --extra-libs="-lpthread -lm" 
-    --bindir="/usr/bin" 
-    --enable-gpl 
-    --enable-libass 
-    --enable-libfdk-aac 
-    --enable-libfreetype 
-    --enable-libmp3lame 
-    --enable-libopus 
-    --enable-libtheora 
-    --enable-libvorbis 
-    --enable-libvpx 
-    --enable-libx264 
-    --enable-libx265 
-    --enable-nonfree
-    --enable-libxcb 
-    --enable-libpulse 
-    --enable-alsa 
-    --enable-filter=movie 
-    --enable-filter=drawtext 
-    --enable-libfreetype 
-    --enable-filter=overlay 
-    --enable-filter=yadif 
+PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure \
+    --prefix="/usr/ffmpeg_build" \
+    --pkg-config-flags="--static" \
+    --extra-cflags="-I/usr/ffmpeg_build/include" \
+    --extra-ldflags="-L/usr/ffmpeg_build/lib" \
+    --extra-libs="-lpthread -lm" \
+    --bindir="/usr/bin" \
+    --enable-gpl \
+    --enable-libaom \
+    --enable-libass \
+    --enable-libfdk-aac \
+    --enable-libfreetype \
+    --enable-libmp3lame \
+    --enable-libopus \
+    --enable-libtheora \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-nonfree \
+    --enable-libxcb \
+    --enable-libpulse \
+    --enable-alsa \
+    --enable-filter=movie \
+    --enable-filter=drawtext \
+    --enable-libfreetype \
+    --enable-filter=overlay \
+    --enable-filter=yadif \
 PATH="/usr/bin:$PATH" make -j$(nproc)
 make install 
 #ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob 

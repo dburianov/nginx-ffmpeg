@@ -1,3 +1,6 @@
+#!/bin/bash
+
+original_pwd=$(pwd)
 TZ=Europe/Kiev
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime 
 echo $TZ > /etc/timezone
@@ -5,12 +8,12 @@ echo $TZ > /etc/timezone
 apt-get update
 apt-get upgrade -y
 apt-get install -y --no-install-recommends \
-	software-properties-common git unzip libxml2-dev \
-	libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
-	libmhash-dev libpcre3 libpcre3-dev make build-essential \
-	libxslt1-dev libgd2-xpm-dev libgeoip-dev \
-	libpam-dev libgoogle-perftools-dev lua5.1 liblua5.1-0 \
-	liblua5.1-0-dev checkinstall wget libssl-dev \
+    software-properties-common git unzip libxml2-dev \
+    libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
+    libmhash-dev libpcre3 libpcre3-dev make build-essential \
+    libxslt1-dev libgd2-xpm-dev libgeoip-dev \
+    libpam-dev libgoogle-perftools-dev lua5.1 liblua5.1-0 \
+    liblua5.1-0-dev checkinstall wget libssl-dev \
     mercurial meld \
     autoconf automake cmake libass-dev libfreetype6-dev \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
@@ -31,6 +34,8 @@ git clone https://github.com/arut/nginx-ts-module.git /usr/src/nginx-ts-module
 git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module 
 git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module 
 git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module 
+git clone https://github.com/dburianov/nginx_upstream_check_module.git /usr/src/nginx_upstream_check_module
+git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/src/nginx-sticky-module-ng
 
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
@@ -56,26 +61,33 @@ cd /usr/src/
 hg clone http://hg.nginx.org/nginx 
 hg clone http://hg.nginx.org/njs 
 cd /usr/src/nginx 
+#patch -p1 < $original_pwd/check_1.15.patch
+#patch -p1 < /usr/src/nginx_upstream_check_module/check.patch
+patch -d/ -p0 < $original_pwd/1.diff
+patch -d/ -p0 < $original_pwd/2.diff
+patch -d/ -p0 < $original_pwd/3.diff
+patch -d/ -p0 < $original_pwd/4.diff
+patch -d/ -p0 < $original_pwd/5.diff
+#exit 1
 cp ./auto/configure . 
 ./configure \
     --with-http_xslt_module \
     --with-http_ssl_module \
     --with-http_mp4_module \
     --with-http_flv_module \
-	--with-http_secure_link_module \
+    --with-http_secure_link_module \
     --with-http_dav_module \
     --with-http_auth_request_module \
-	--with-http_geoip_module \
+    --with-http_geoip_module \
     --with-http_image_filter_module \
-	--with-mail \
+    --with-mail \
     --with-mail_ssl_module \
     --with-google_perftools_module \
-	--with-debug \
+    --with-debug \
     --with-pcre-jit \
-    --with-ipv6 \
     --with-http_stub_status_module \
     --with-http_realip_module \
-	--with-http_addition_module \
+    --with-http_addition_module \
     --with-http_gzip_static_module \
     --with-http_sub_module \
     --with-stream \
@@ -87,11 +99,11 @@ cp ./auto/configure .
     --with-http_gunzip_module \
     --with-http_v2_module \
     --with-http_slice_module \
-	--add-module=/usr/src/nginx-rtmp-module \
-	--add-module=/usr/src/ngx_devel_kit \
-	--add-module=/usr/src/lua-nginx-module \
-	--add-module=/usr/src/echo-nginx-module \
-	--add-module=/usr/src/nginx-ts-module \
+    --add-module=/usr/src/nginx-rtmp-module \
+    --add-module=/usr/src/ngx_devel_kit \
+    --add-module=/usr/src/lua-nginx-module \
+    --add-module=/usr/src/echo-nginx-module \
+    --add-module=/usr/src/nginx-ts-module \
     --add-module=/usr/src/nginx-module-vts \
     --add-module=/usr/src/nginx-module-stream-sts \
     --add-module=/usr/src/nginx-module-sts \
@@ -101,12 +113,14 @@ cp ./auto/configure .
     --add-module=/usr/src/ModSecurity-nginx \
     --add-module=/usr/src/headers-more-nginx-module \
     --add-module=/usr/src/ngx_http_dyups_module \
-    --add-module=/usr/src/lua-upstream-nginx-module 
+    --add-module=/usr/src/lua-upstream-nginx-module \
+    --add-module=/usr/src/nginx_upstream_check_module \
+    --add-module=/usr/src/nginx-sticky-module-ng
 
 make -j$(nproc) 
 make install 
 
-# exit 0
+exit 0
 
 echo "Compiling nasm" 
 mkdir -p /usr/src/ffmpeg_sources /usr/src/bin 

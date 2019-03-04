@@ -1,0 +1,13 @@
+--- /usr/src/nginx/src/http/ngx_http_upstream_round_robin.h	2018-11-27 14:56:38.000000000 +0200
++++ /usr/src/nginx/src/http/ngx_http_upstream_round_robin.h	2018-11-27 16:18:13.537206790 +0200
+@@ -38,6 +38,10 @@
+     ngx_msec_t                      slow_start;
+     ngx_msec_t                      start_time;
+ 
++#if (NGX_HTTP_UPSTREAM_CHECK)
++    ngx_uint_t                      check_index;
++#endif
++
+     ngx_uint_t                      down;
+ 
+ #if (NGX_HTTP_SSL || NGX_COMPAT)

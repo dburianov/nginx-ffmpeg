@@ -6,7 +6,7 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
 echo $TZ > /etc/timezone
 
 apt-get update
-apt-get upgrade -y
+#apt-get upgrade -y
 apt-get install -y --no-install-recommends \
     software-properties-common git unzip libxml2-dev \
     libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \

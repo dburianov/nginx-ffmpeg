@@ -118,6 +118,7 @@ cp ./auto/configure .
     --add-module=/usr/src/nginx-sticky-module-ng
 
 make -j$(nproc) 
+exit 0
 make install 
 
 exit 0

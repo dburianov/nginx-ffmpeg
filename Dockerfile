@@ -175,7 +175,7 @@ RUN echo "Compiling nasm" \
     && make -j$(nproc) \
     && make install \
     && echo "Compiling aom" \
-    && cd ~/ffmpeg_sources \
+    && cd /usr/src/ffmpeg_sources \
     && git -C aom pull 2> /dev/null || git clone --depth 1 https://aomedia.googlesource.com/aom \
     && mkdir -p aom_build \
     && cd aom_build \

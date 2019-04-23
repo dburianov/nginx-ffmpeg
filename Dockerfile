@@ -44,7 +44,7 @@ RUN apt-get update \
     && make install \
     && cd .. \
     && export LUAJIT_LIB=/usr/local/lib \
-    && export LUAJIT_INC=/usr/local/include/luajit-2.0 \
+    && export LUAJIT_INC=/usr/local/include/luajit-2.1 \
     && ldconfig \
     && echo "Compiling ModSecurity" \
     && cd /usr/src \

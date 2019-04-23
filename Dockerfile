@@ -113,8 +113,8 @@ RUN apt-get update \
     && make -j$(nproc) \
     && make install \
     && rm -rf /usr/src/*  \
-    && cp -rf /usr/src/lua-resty-core/lib/ /usr/local/lib/lua/5.1/ \
-    && cp -rf /usr/src/lua-resty-lrucache/lib/ /usr/local/lib/lua/5.1/
+    && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/lib/lua/5.1/ \
+    && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/lib/lua/5.1/
 
 RUN echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \

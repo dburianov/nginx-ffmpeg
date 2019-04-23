@@ -20,7 +20,7 @@ apt-get install -y --no-install-recommends \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
     pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev
 
-git clone http://luajit.org/git/luajit-2.0.git /usr/src/luajit-2.0 
+git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 
 git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit 
 git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module 
 git clone https://github.com/openresty/echo-nginx-module.git /usr/src/echo-nginx-module 
@@ -36,13 +36,16 @@ git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_ht
 git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module 
 git clone https://github.com/dburianov/nginx_upstream_check_module.git /usr/src/nginx_upstream_check_module
 git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/src/nginx-sticky-module-ng
+&& git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core \
+    && git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache \
+    && git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-nginx-module \
 
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
 make install 
 cd .. 
 export LUAJIT_LIB=/usr/local/lib 
-export LUAJIT_INC=/usr/local/include/luajit-2.0 
+export LUAJIT_INC=/usr/local/include/luajit-2.1 
 ldconfig 
 echo "Compiling ModSecurity" 
 cd /usr/src 
@@ -115,12 +118,14 @@ cp ./auto/configure .
     --add-module=/usr/src/ngx_http_dyups_module \
     --add-module=/usr/src/lua-upstream-nginx-module \
     --add-module=/usr/src/nginx_upstream_check_module \
-    --add-module=/usr/src/nginx-sticky-module-ng
+    --add-module=/usr/src/nginx-sticky-module-ng \
+    --add-module=/usr/src/status-nginx-module
 
 make -j$(nproc) 
 #exit 0
 make install 
-
+cp -rf /usr/src/lua-resty-core/lib/* /usr/local/lib/lua/5.1/
+cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/lib/lua/5.1/
 exit 0
 
 echo "Compiling nasm" 

@@ -36,6 +36,7 @@ RUN apt-get update \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module \
     && git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module \
+    && git git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/src/nginx-sticky-module-ng \
     && git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core \
     && git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache \
     && git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-nginx-module \
@@ -109,12 +110,13 @@ RUN apt-get update \
       --add-module=/usr/src/headers-more-nginx-module \
       --add-module=/usr/src/ngx_http_dyups_module \
       --add-module=/usr/src/lua-upstream-nginx-module \
+      --add-module=/usr/src/nginx-sticky-module-ng \
       --add-module=/usr/src/status-nginx-module \
     && make -j$(nproc) \
     && make install \
-    && rm -rf /usr/src/*  \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/lib/lua/5.1/ \
-    && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/lib/lua/5.1/
+    && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/lib/lua/5.1/ \
+    && rm -rf /usr/src/*  
 
 RUN echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \

@@ -22,7 +22,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
     && rm -rf /usr/share/man/* \
-    && git clone http://luajit.org/git/luajit-2.0.git /usr/src/luajit-2.0 \
+    && git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     && git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit \
     && git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module \
     && git clone https://github.com/openresty/echo-nginx-module.git /usr/src/echo-nginx-module \
@@ -36,6 +36,9 @@ RUN apt-get update \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module \
     && git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module \
+    && git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core \
+    && git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache \
+    && git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-nginx-module \
     && cd /usr/src/luajit-2.0 \
     && make -j$(nproc) \
     && make install \
@@ -62,53 +65,56 @@ RUN apt-get update \
     && cd /usr/src/nginx \
     && cp ./auto/configure . \
     && ./configure \
-    --with-http_xslt_module \
-    --with-http_ssl_module \
-    --with-http_mp4_module \
-    --with-http_flv_module \
-	--with-http_secure_link_module \
-    --with-http_dav_module \
-    --with-http_auth_request_module\
-	--with-http_geoip_module \
-    --with-http_image_filter_module \
-	--with-mail \
-    --with-mail_ssl_module \
-    --with-google_perftools_module \
-	--with-debug \
-    --with-pcre-jit \
-    --with-ipv6 \
-    --with-http_stub_status_module \
-    --with-http_realip_module \
-	--with-http_addition_module \
-    --with-http_gzip_static_module \
-    --with-http_sub_module \
-    --with-stream \
-    --with-stream_geoip_module \
-    --with-stream_realip_module \
-    --with-stream_ssl_module \
-    --with-stream_ssl_preread_module \
-    --with-http_random_index_module \
-    --with-http_gunzip_module \
-    --with-http_v2_module \
-    --with-http_slice_module \
-	--add-module=/usr/src/nginx-rtmp-module \
-	--add-module=/usr/src/ngx_devel_kit \
-	--add-module=/usr/src/lua-nginx-module \
-	--add-module=/usr/src/echo-nginx-module \
-	--add-module=/usr/src/nginx-ts-module \
-    --add-module=/usr/src/nginx-module-vts \
-    --add-module=/usr/src/nginx-module-stream-sts \
-    --add-module=/usr/src/nginx-module-sts \
-    --add-module=/usr/src/naxsi/naxsi_src \
-    --add-module=/usr/src/nginx-vod-module \
-    --add-module=/usr/src/njs/nginx \
-    --add-module=/usr/src/ModSecurity-nginx \
-    --add-module=/usr/src/headers-more-nginx-module \
-    --add-module=/usr/src/ngx_http_dyups_module \
-    --add-module=/usr/src/lua-upstream-nginx-module \
+      --with-http_xslt_module \
+      --with-http_ssl_module \
+      --with-http_mp4_module \
+      --with-http_flv_module \
+      --with-http_secure_link_module \
+      --with-http_dav_module \
+      --with-http_auth_request_module\
+      --with-http_geoip_module \
+      --with-http_image_filter_module \
+      --with-mail \
+      --with-mail_ssl_module \
+      --with-google_perftools_module \
+      --with-debug \
+      --with-pcre-jit \
+      --with-ipv6 \
+      --with-http_stub_status_module \
+      --with-http_realip_module \
+      --with-http_addition_module \
+      --with-http_gzip_static_module \
+      --with-http_sub_module \
+      --with-stream \
+      --with-stream_geoip_module \
+      --with-stream_realip_module \
+      --with-stream_ssl_module \
+      --with-stream_ssl_preread_module \
+      --with-http_random_index_module \
+      --with-http_gunzip_module \
+      --with-http_v2_module \
+      --with-http_slice_module \
+      --add-module=/usr/src/nginx-rtmp-module \
+      --add-module=/usr/src/ngx_devel_kit \
+      --add-module=/usr/src/lua-nginx-module \
+      --add-module=/usr/src/echo-nginx-module \
+      --add-module=/usr/src/nginx-ts-module \
+      --add-module=/usr/src/nginx-module-vts \
+      --add-module=/usr/src/nginx-module-stream-sts \
+      --add-module=/usr/src/nginx-module-sts \
+      --add-module=/usr/src/naxsi/naxsi_src \
+      --add-module=/usr/src/nginx-vod-module \
+      --add-module=/usr/src/njs/nginx \
+      --add-module=/usr/src/ModSecurity-nginx \
+      --add-module=/usr/src/headers-more-nginx-module \
+      --add-module=/usr/src/ngx_http_dyups_module \
+      --add-module=/usr/src/lua-upstream-nginx-module \
+      --add-module=/usr/src/status-nginx-module \
     && make -j$(nproc) \
     && make install \
-    && rm -rf /usr/src/* 
+    && rm -rf /usr/src/*  \
+    && cp -rf /usr/src/lua-resty-core/lib/ /usr/local/lib/lua/5.1/ \
+    && cp -rf /usr/src/lua-resty-lrucache/lib/ /usr/local/lib/lua/5.1/
 
 RUN echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \

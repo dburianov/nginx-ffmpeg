@@ -114,8 +114,8 @@ RUN apt-get update \
       --add-module=/usr/src/status-nginx-module \
     && make -j$(nproc) \
     && make install \
-    && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/lib/lua/5.1/ \
-    && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/lib/lua/5.1/ \
+    && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \
+    && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/ \
     && rm -rf /usr/src/*  
 
 RUN echo "Compiling nasm" \

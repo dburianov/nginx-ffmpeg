@@ -124,8 +124,8 @@ cp ./auto/configure .
 make -j$(nproc) 
 #exit 0
 make install 
-cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lib/lua/5.1/
-cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lib/lua/5.1/
+cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/
+cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/
 exit 0
 
 echo "Compiling nasm" 

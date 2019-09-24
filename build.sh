@@ -243,7 +243,7 @@ PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./config
     --enable-filter=drawtext \
     --enable-libfreetype \
     --enable-filter=overlay \
-    --enable-filter=yadif \
+    --enable-filter=yadif 
 PATH="/usr/bin:$PATH" make -j$(nproc)
 make install 
 #ln -s /usr/bin/ffmpeg /usr/local/bin/ffmpeg && ln -s /usr/bin/ffprob /usr/local/bin/ffprob 

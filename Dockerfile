@@ -129,7 +129,7 @@ RUN apt-get update \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
     --add-module=/usr/src/status-nginx-module \
-    --add-module=/usr/src/nginx-opentracing/opentracing
+    --add-module=/usr/src/nginx-opentracing/opentracing \
     && make -j$(nproc) \
     && make install \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \

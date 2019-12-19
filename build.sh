@@ -6,8 +6,8 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
 echo $TZ > /etc/timezone
 
 apt-get update
-#apt-get upgrade -y
-apt-get install -y --no-install-recommends \
+apt-get upgrade -y
+apt-get install -y --no-install-recommends --no-install-suggests \
     software-properties-common git unzip libxml2-dev \
     libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
     libmhash-dev libpcre3 libpcre3-dev make build-essential \
@@ -18,7 +18,8 @@ apt-get install -y --no-install-recommends \
     autoconf automake cmake libass-dev libfreetype6-dev \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
-    pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev
+    pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev \
+    gettext gnupg2 curl python3 jq ca-certificates gcc g++ 
 
 git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 
 git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit 
@@ -39,6 +40,9 @@ git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/sr
 git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core
 git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache
 git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-nginx-module
+git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity /usr/src/ModSecurity
+git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git /usr/src/ModSecurity-nginx
+git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp
 
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
@@ -49,7 +53,6 @@ export LUAJIT_INC=/usr/local/include/luajit-2.1
 ldconfig 
 echo "Compiling ModSecurity" 
 cd /usr/src 
-git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity 
 cd ModSecurity 
 git submodule init 
 git submodule update 
@@ -58,7 +61,12 @@ git submodule update
 make -j$(nproc) 
 make install 
 cd /usr/src 
-git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git 
+echo "Compiling opentracing-cpp API"
+cd /usr/src/opentracing-cpp
+mkdir .build && cd .build 
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF .. 
+make
+make install
 echo "Compiling Nginx" 
 cd /usr/src/ 
 hg clone http://hg.nginx.org/nginx 
@@ -72,6 +80,8 @@ patch -d/ -p0 < $original_pwd/3.diff
 patch -d/ -p0 < $original_pwd/4.diff
 patch -d/ -p0 < $original_pwd/5.diff
 #exit 1
+export ASAN_OPTIONS=detect_leaks=0 
+export CFLAGS="-Wno-error" 
 cp ./auto/configure . 
 ./configure \
     --with-http_xslt_module \
@@ -81,6 +91,7 @@ cp ./auto/configure .
     --with-http_secure_link_module \
     --with-http_dav_module \
     --with-http_auth_request_module \
+    --with-compat \
     --with-http_geoip_module \
     --with-http_image_filter_module \
     --with-mail \
@@ -119,13 +130,22 @@ cp ./auto/configure .
     --add-module=/usr/src/lua-upstream-nginx-module \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
-    --add-module=/usr/src/status-nginx-module
+    --add-module=/usr/src/status-nginx-module \
+    --add-module=/usr/src/nginx-opentracing/opentracing
 
 make -j$(nproc) 
 #exit 0
 make install 
 cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/
 cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/
+# Jaeger
+wget https://github.com/jaegertracing/jaeger-client-cpp/releases/download/v0.4.2/libjaegertracing_plugin.linux_amd64.so -O /usr/local/lib/libjaegertracing_plugin.so
+# LightStep
+wget -O - https://github.com/lightstep/lightstep-tracer-cpp/releases/download/v0.8.1/linux-amd64-liblightstep_tracer_plugin.so.gz | gunzip -c > /usr/local/lib/liblightstep_tracer_plugin.so
+# Zipkin
+wget -O - https://github.com/rnburn/zipkin-cpp-opentracing/releases/download/v0.5.2/linux-amd64-libzipkin_opentracing_plugin.so.gz | gunzip -c > /usr/local/lib/libzipkin_opentracing_plugin.so
+# Datadog
+wget -O - https://github.com/DataDog/dd-opentracing-cpp/releases/download/v0.3.0/linux-amd64-libdd_opentracing_plugin.so.gz | gunzip -c > /usr/local/lib/libdd_opentracing_plugin.so
 exit 0
 
 echo "Compiling nasm" 

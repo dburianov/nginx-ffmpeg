@@ -73,11 +73,11 @@ RUN apt-get update \
     && hg clone http://hg.nginx.org/nginx \
     && hg clone http://hg.nginx.org/njs \
     && cd /usr/src/nginx \
-    && patch -d/ -p0 < $original_pwd/1.diff \
-    && patch -d/ -p0 < $original_pwd/2.diff \
-    && patch -d/ -p0 < $original_pwd/3.diff \
-    && patch -d/ -p0 < $original_pwd/4.diff \
-    && patch -d/ -p0 < $original_pwd/5.diff \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/1.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/2.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/3.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/4.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/5.diff | patch -d/ -p0 \
     && export ASAN_OPTIONS=detect_leaks=0  \
     && export CFLAGS="-Wno-error" \
     && cp ./auto/configure . \

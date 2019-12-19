@@ -47,6 +47,7 @@ git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracin
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
 make install 
+#checkinstall -D --install=no --pkgname=luajit --pkgversion=2.1 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
 cd .. 
 export LUAJIT_LIB=/usr/local/lib 
 export LUAJIT_INC=/usr/local/include/luajit-2.1 
@@ -60,6 +61,7 @@ git submodule update
 ./configure 
 make -j$(nproc) 
 make install 
+#checkinstall -D --install=no --pkgname=modsecurity --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
 cd /usr/src 
 echo "Compiling opentracing-cpp API"
 cd /usr/src/opentracing-cpp
@@ -67,6 +69,7 @@ mkdir .build && cd .build
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF .. 
 make
 make install
+#checkinstall -D --install=no --pkgname=opentracing-cpp --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
 echo "Compiling Nginx" 
 cd /usr/src/ 
 hg clone http://hg.nginx.org/nginx 
@@ -136,6 +139,7 @@ cp ./auto/configure .
 make -j$(nproc) 
 #exit 0
 make install 
+#checkinstall -D --install=no --pkgname=nginx --pkgversion=1.17.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
 cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/
 cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/
 # Jaeger

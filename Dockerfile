@@ -37,6 +37,7 @@ RUN apt-get update \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module \
     && git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module \
+    && git clone https://github.com/dburianov/nginx_upstream_check_module.git /usr/src/nginx_upstream_check_module \
     && git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/src/nginx-sticky-module-ng \
     && git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core \
     && git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache \

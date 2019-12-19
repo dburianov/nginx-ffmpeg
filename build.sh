@@ -43,11 +43,12 @@ git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-ngi
 git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity /usr/src/ModSecurity
 git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git /usr/src/ModSecurity-nginx
 git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp
+git clone https://github.com/opentracing-contrib/nginx-opentracing.git /usr/src/nginx-opentracing
 
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
 make install 
-#checkinstall -D --install=no --pkgname=luajit --pkgversion=2.1 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
+#checkinstall -D --install=no --pkgname=luajit --pkgversion=2.1 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no --default
 cd .. 
 export LUAJIT_LIB=/usr/local/lib 
 export LUAJIT_INC=/usr/local/include/luajit-2.1 
@@ -61,15 +62,15 @@ git submodule update
 ./configure 
 make -j$(nproc) 
 make install 
-#checkinstall -D --install=no --pkgname=modsecurity --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
+#checkinstall -D --install=no --pkgname=modsecurity --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no --default
 cd /usr/src 
 echo "Compiling opentracing-cpp API"
 cd /usr/src/opentracing-cpp
 mkdir .build && cd .build 
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF .. 
-make
+make  -j$(nproc) 
 make install
-#checkinstall -D --install=no --pkgname=opentracing-cpp --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
+#checkinstall -D --install=no --pkgname=opentracing-cpp --pkgversion=3.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no --default
 echo "Compiling Nginx" 
 cd /usr/src/ 
 hg clone http://hg.nginx.org/nginx 
@@ -139,7 +140,7 @@ cp ./auto/configure .
 make -j$(nproc) 
 #exit 0
 make install 
-#checkinstall -D --install=no --pkgname=nginx --pkgversion=1.17.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no
+#checkinstall -D --install=no --pkgname=nginx --pkgversion=1.17.0 --pkgrelease=0 --pkglicense=LGPL --nodoc --fstrans=no --default
 cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/
 cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/
 # Jaeger

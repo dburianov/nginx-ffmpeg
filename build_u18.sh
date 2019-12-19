@@ -44,6 +44,7 @@ git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-ngi
 git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity /usr/src/ModSecurity
 git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git /usr/src/ModSecurity-nginx
 git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp
+git clone https://github.com/opentracing-contrib/nginx-opentracing.git /usr/src/nginx-opentracing
 
 cd /usr/src/luajit-2.0 
 make -j$(nproc) 
@@ -66,7 +67,7 @@ echo "Compiling opentracing-cpp API"
 cd /usr/src/opentracing-cpp
 mkdir .build && cd .build 
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF .. 
-make
+make  -j$(nproc) 
 make install
 echo "Compiling Nginx" 
 cd /usr/src/ 

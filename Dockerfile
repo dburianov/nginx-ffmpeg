@@ -162,7 +162,7 @@ RUN echo "Compiling nasm" \
     && make install \
     && echo "Compiling x264" \
     && cd /usr/src/ffmpeg_sources \
-    && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
+    && git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264 \
     && cd x264 \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
     && PATH="/usr/bin:$PATH" make -j$(nproc) \

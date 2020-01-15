@@ -75,6 +75,7 @@ make install
 echo "Cargo install" 
 wget https://sh.rustup.rs
 bash index.html -y
+PATH=$PATH:$HOME/.cargo/bin
 cd /usr/src/ 
 echo "Compiling Nginx" 
 cd /usr/src/ 

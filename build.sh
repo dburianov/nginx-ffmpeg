@@ -134,8 +134,9 @@ cp ./auto/configure .
     --add-module=/usr/src/lua-upstream-nginx-module \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
-    --add-module=/usr/src/status-nginx-module \
-    --add-module=/usr/src/nginx-opentracing/opentracing
+    --add-module=/usr/src/status-nginx-module
+    #\
+    #--add-module=/usr/src/nginx-opentracing/opentracing
 
 make -j$(nproc) 
 #exit 0

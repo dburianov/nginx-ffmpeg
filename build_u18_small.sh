@@ -125,4 +125,3 @@ cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/
 cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/
 
 /usr/local/nginx/sbin/nginx -V
-exit 0

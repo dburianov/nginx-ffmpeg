@@ -129,10 +129,15 @@ RUN apt-get update \
     && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/ \
     && rm -rf /usr/src/* 
 
+RUN wget https://releases.hashicorp.com/consul/1.7.0/consul_1.7.0_linux_amd64.zip \
+    && unzip consul_1.7.0_linux_amd64.zip \
+    && mv consul /usr/local/bin/
+
 EXPOSE 80
 EXPOSE 1935
 EXPOSE 443
-EXPOSE 22
+EXPOSE 8300
+EXPOSE 8301
 
 VOLUME /usr/local/nginx/conf
 VOLUME /usr/local/nginx/html

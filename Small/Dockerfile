@@ -34,7 +34,7 @@ RUN apt-get -yqq update \
     && apt-get autoremove -y \
     && apt-get clean -y
 
-FROM prebuild AS bulid
+FROM prebuild AS build 
 RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     && git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit \
     && git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module \

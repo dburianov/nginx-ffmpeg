@@ -148,8 +148,9 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
 #    && unzip consul_1.7.0_linux_amd64.zip \
 #    && mv consul /usr/local/bin/
 
-RUN ldd /usr/local/nginx/sbin/nginx |  cut -d ' ' -f 3 | grep '/' | grep -v '/usr/local' | xargs -i cp {} /usr/local/lib/ \
-    && LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
+RUN ldd /usr/local/nginx/sbin/nginx |  cut -d ' ' -f 3 | grep '/' | grep -v '/usr/local' | xargs -i cp {} /usr/local/lib/ 
+#\
+#    && LD_LIBRARY_PATH=/usr/local/lib nginx -buildconf
 
 FROM base AS release
 COPY --from=build /usr/local /usr/local/

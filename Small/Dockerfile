@@ -14,7 +14,8 @@ RUN apt-get update \
     && apt-get clean -y
 
 FROM base AS prebuild  
-RUN apt-get install -y -qy --no-install-recommends --no-install-suggests \  
+RUN apt-get -yqq update \
+    && apt-get install -y -qy --no-install-recommends --no-install-suggests \  
     git unzip libxml2-dev \	
     libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
 	libmhash-dev libpcre3 libpcre3-dev make build-essential \

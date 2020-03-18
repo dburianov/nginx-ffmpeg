@@ -138,7 +138,6 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
     --add-module=/usr/src/status-nginx-module \
-    --add-module=/usr/src/nginx-upsync-module \
     && make -j$(nproc) \
     && make install \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \

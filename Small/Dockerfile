@@ -1,13 +1,22 @@
-FROM ubuntu:16.04
+FROM ubuntu:16.04 AS base
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends --no-install-suggests \
-	software-properties-common git unzip libxml2-dev \
-	libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
+    && apt-get install -y -qy --no-install-recommends --no-install-suggests \
+	software-properties-common \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/share/doc/* \
+    && rm -rf /usr/share/man/* \
+    && apt-get autoremove -y \
+    && apt-get clean -y
+
+FROM base AS prebuild  
+RUN apt-get install -y -qy --no-install-recommends --no-install-suggests \  
+    git unzip libxml2-dev \	
+    libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
 	libmhash-dev libpcre3 libpcre3-dev make build-essential \
 	libxslt1-dev libgd2-xpm-dev libgeoip-dev \
 	libpam-dev libgoogle-perftools-dev lua5.1 liblua5.1-0 \
@@ -21,7 +30,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
     && rm -rf /usr/share/man/* \
-    && git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
+    && apt-get autoremove -y \
+    && apt-get clean -y
+
+FROM prebuild AS bulid
+RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     && git clone https://github.com/simpl/ngx_devel_kit.git /usr/src/ngx_devel_kit \
     && git clone https://github.com/openresty/lua-nginx-module.git /usr/src/lua-nginx-module \
     && git clone https://github.com/openresty/echo-nginx-module.git /usr/src/echo-nginx-module \
@@ -44,6 +57,7 @@ RUN apt-get update \
     && git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git /usr/src/ModSecurity-nginx \
     && git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp \
     && git clone https://github.com/opentracing-contrib/nginx-opentracing.git /usr/src/nginx-opentracing \
+    && git clone https://github.com/weibocom/nginx-upsync-module.git /usr/src/nginx-upsync-module \
     && cd /usr/src/luajit-2.0 \
     && make -j$(nproc) \
     && make install \
@@ -123,21 +137,28 @@ RUN apt-get update \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
     --add-module=/usr/src/status-nginx-module \
+    --add-module=/usr/src/nginx-upsync-module \
     && make -j$(nproc) \
     && make install \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \
     && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/ \
     && rm -rf /usr/src/* 
 
-RUN wget https://releases.hashicorp.com/consul/1.7.0/consul_1.7.0_linux_amd64.zip \
-    && unzip consul_1.7.0_linux_amd64.zip \
-    && mv consul /usr/local/bin/
+#RUN wget https://releases.hashicorp.com/consul/1.7.0/consul_1.7.0_linux_amd64.zip \
+#    && unzip consul_1.7.0_linux_amd64.zip \
+#    && mv consul /usr/local/bin/
+
+RUN ldd /usr/local/nginx/sbin/nginx |  cut -d ' ' -f 3 | grep '/' | xargs -i cp {} /usr/local/lib/ \
+    && LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
+
+FROM base AS release
+COPY --from=build /usr/local /usr/local/
 
 EXPOSE 80
 EXPOSE 1935
 EXPOSE 443
-EXPOSE 8300
-EXPOSE 8301
+#EXPOSE 8300
+#EXPOSE 8301
 
 VOLUME /usr/local/nginx/conf
 VOLUME /usr/local/nginx/html

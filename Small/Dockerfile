@@ -28,6 +28,9 @@ RUN apt-get -yqq update \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
     pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev \
     gettext gnupg2 curl python3 jq ca-certificates gcc g++ \
+    libssl-dev libpcre3-dev \
+    zlib1g-dev libxml2-dev libxslt-dev libgd-dev libgeoip-dev \
+    libperl-dev \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
     && rm -rf /usr/share/man/* \
@@ -59,6 +62,7 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     && git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp \
     && git clone https://github.com/opentracing-contrib/nginx-opentracing.git /usr/src/nginx-opentracing \
     && git clone https://github.com/weibocom/nginx-upsync-module.git /usr/src/nginx-upsync-module \
+    && git clone https://github.com/google/ngx_brotli /usr/src/ngx_brotli \
     && cd /usr/src/luajit-2.0 \
     && make -j$(nproc) \
     && make install \
@@ -80,6 +84,9 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     && cd /usr/src/ \
     && hg clone http://hg.nginx.org/nginx \
     && hg clone http://hg.nginx.org/njs \
+    && echo "Init Nginx Brotli" \
+    && cd /usr/src/ngx_brotli \
+    && git submodule update --init \
     && cd /usr/src/nginx \
     && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/1.diff | patch -d/ -p0 \
     && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/2.diff | patch -d/ -p0 \
@@ -138,6 +145,7 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
     --add-module=/usr/src/nginx_upstream_check_module \
     --add-module=/usr/src/nginx-sticky-module-ng \
     --add-module=/usr/src/status-nginx-module \
+    --add-module=/usr/src/ngx_brotli \
     && make -j$(nproc) \
     && make install \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \

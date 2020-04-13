@@ -169,16 +169,9 @@ EXPOSE 443
 #EXPOSE 8300
 #EXPOSE 8301
 
-VOLUME /usr/local/nginx/conf
-VOLUME /usr/local/nginx/html
-VOLUME /usr/local/nginx/lua
-VOLUME /usr/local/nginx/logs
-VOLUME /usr/local/nginx/cache
+VOLUME ["/usr/local/nginx/conf", "/usr/local/nginx/html", "/usr/local/nginx/lua", "/usr/local/nginx/logs", "/usr/local/nginx/cache"]
 
-#COPY
-ADD . /scripts 
+RUN PATH=$PATH:/usr/local/nginx/sbin
 
-CMD ["/scripts/run.sh"]
-
-RUN chmod +x /scripts/run.sh
+CMD ["nginx", "-g", "daemon off;"]
 

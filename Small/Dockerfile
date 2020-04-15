@@ -157,8 +157,6 @@ RUN git clone https://github.com/openresty/luajit2.git /usr/src/luajit-2.0 \
 #    && mv consul /usr/local/bin/
 
 RUN ldd /usr/local/nginx/sbin/nginx |  cut -d ' ' -f 3 | grep '/' | grep -v '/usr/local' | xargs -i cp {} /usr/local/lib/ 
-#\
-#    && LD_LIBRARY_PATH=/usr/local/lib nginx -buildconf
 
 FROM base AS release
 COPY --from=build /usr/local /usr/local/
@@ -170,6 +168,8 @@ EXPOSE 443
 #EXPOSE 8301
 
 VOLUME ["/usr/local/nginx/conf", "/usr/local/nginx/html", "/usr/local/nginx/lua", "/usr/local/nginx/logs", "/usr/local/nginx/cache"]
+
+RUN ldconfig /usr/local/lib
 
 RUN PATH=$PATH:/usr/local/nginx/sbin
 

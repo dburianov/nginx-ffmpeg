@@ -173,5 +173,5 @@ VOLUME ["/usr/local/nginx/conf", "/usr/local/nginx/html", "/usr/local/nginx/lua"
 
 RUN PATH=$PATH:/usr/local/nginx/sbin
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/usr/local/nginx/sbin/nginx", "-g", "daemon off;"]
 

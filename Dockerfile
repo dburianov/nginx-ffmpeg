@@ -7,7 +7,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 #--with-http_perl_module
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends --no-install-suggests \
 	software-properties-common git unzip libxml2-dev \
 	libbz2-dev libcurl4-openssl-dev libmcrypt-dev libmhash2 \
 	libmhash-dev libpcre3 libpcre3-dev make build-essential \
@@ -19,6 +19,7 @@ RUN apt-get update \
     libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev \
     libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev \
     pkg-config texinfo zlib1g-dev pkgconf libyajl-dev libpcre++-dev liblmdb-dev \
+    gettext gnupg2 curl python3 jq ca-certificates gcc g++\
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc/* \
     && rm -rf /usr/share/man/* \
@@ -36,10 +37,15 @@ RUN apt-get update \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && git clone https://github.com/yzprofile/ngx_http_dyups_module.git /usr/src/ngx_http_dyups_module \
     && git clone https://github.com/openresty/lua-upstream-nginx-module.git /usr/src/lua-upstream-nginx-module \
+    && git clone https://github.com/dburianov/nginx_upstream_check_module.git /usr/src/nginx_upstream_check_module \
     && git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git /usr/src/nginx-sticky-module-ng \
     && git clone https://github.com/openresty/lua-resty-core.git /usr/src/lua-resty-core \
     && git clone https://github.com/openresty/lua-resty-lrucache.git /usr/src/lua-resty-lrucache \
     && git clone https://github.com/hnlq715/status-nginx-module.git /usr/src/status-nginx-module \
+    && git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity /usr/src/ModSecurity \
+    && git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git /usr/src/ModSecurity-nginx \
+    && git clone https://github.com/opentracing/opentracing-cpp.git /usr/src/opentracing-cpp \
+    && git clone https://github.com/opentracing-contrib/nginx-opentracing.git /usr/src/nginx-opentracing \
     && cd /usr/src/luajit-2.0 \
     && make -j$(nproc) \
     && make install \
@@ -49,7 +55,6 @@ RUN apt-get update \
     && ldconfig \
     && echo "Compiling ModSecurity" \
     && cd /usr/src \
-    && git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity \
     && cd ModSecurity \
     && git submodule init \
     && git submodule update \
@@ -58,65 +63,84 @@ RUN apt-get update \
     && make -j$(nproc) \
     && make install \
     && cd /usr/src \
-    && git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git \
+    && echo "Compiling opentracing-cpp API" \
+    && cd /usr/src/opentracing-cpp \
+    && mkdir .build && cd .build \
+    && cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF .. \
+    && make  -j$(nproc) \
+    && make install \
     && echo "Compiling Nginx" \
     && cd /usr/src/ \
     && hg clone http://hg.nginx.org/nginx \
     && hg clone http://hg.nginx.org/njs \
     && cd /usr/src/nginx \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/1.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/2.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/3.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/4.diff | patch -d/ -p0 \
+    && curl -sS https://raw.githubusercontent.com/dburianov/nginx-ffmpeg/master/5.diff | patch -d/ -p0 \
+    && export ASAN_OPTIONS=detect_leaks=0  \
+    && export CFLAGS="-Wno-error" \
     && cp ./auto/configure . \
     && ./configure \
-      --with-http_xslt_module \
-      --with-http_ssl_module \
-      --with-http_mp4_module \
-      --with-http_flv_module \
-      --with-http_secure_link_module \
-      --with-http_dav_module \
-      --with-http_auth_request_module\
-      --with-http_geoip_module \
-      --with-http_image_filter_module \
-      --with-mail \
-      --with-mail_ssl_module \
-      --with-google_perftools_module \
-      --with-debug \
-      --with-pcre-jit \
-      --with-ipv6 \
-      --with-http_stub_status_module \
-      --with-http_realip_module \
-      --with-http_addition_module \
-      --with-http_gzip_static_module \
-      --with-http_sub_module \
-      --with-stream \
-      --with-stream_geoip_module \
-      --with-stream_realip_module \
-      --with-stream_ssl_module \
-      --with-stream_ssl_preread_module \
-      --with-http_random_index_module \
-      --with-http_gunzip_module \
-      --with-http_v2_module \
-      --with-http_slice_module \
-      --add-module=/usr/src/nginx-rtmp-module \
-      --add-module=/usr/src/ngx_devel_kit \
-      --add-module=/usr/src/lua-nginx-module \
-      --add-module=/usr/src/echo-nginx-module \
-      --add-module=/usr/src/nginx-ts-module \
-      --add-module=/usr/src/nginx-module-vts \
-      --add-module=/usr/src/nginx-module-stream-sts \
-      --add-module=/usr/src/nginx-module-sts \
-      --add-module=/usr/src/naxsi/naxsi_src \
-      --add-module=/usr/src/nginx-vod-module \
-      --add-module=/usr/src/njs/nginx \
-      --add-module=/usr/src/ModSecurity-nginx \
-      --add-module=/usr/src/headers-more-nginx-module \
-      --add-module=/usr/src/ngx_http_dyups_module \
-      --add-module=/usr/src/lua-upstream-nginx-module \
-      --add-module=/usr/src/nginx-sticky-module-ng \
-      --add-module=/usr/src/status-nginx-module \
+    --with-http_xslt_module \
+    --with-http_ssl_module \
+    --with-http_mp4_module \
+    --with-http_flv_module \
+	--with-http_secure_link_module \
+    --with-http_dav_module \
+    --with-http_auth_request_module \
+    --with-compat \
+	--with-http_geoip_module \
+    --with-http_image_filter_module \
+	--with-mail \
+    --with-mail_ssl_module \
+    --with-google_perftools_module \
+	--with-debug \
+    --with-pcre-jit \
+    --with-ipv6 \
+    --with-http_stub_status_module \
+    --with-http_realip_module \
+	--with-http_addition_module \
+    --with-http_gzip_static_module \
+    --with-http_sub_module \
+    --with-stream \
+    --with-stream_geoip_module \
+    --with-stream_realip_module \
+    --with-stream_ssl_module \
+    --with-stream_ssl_preread_module \
+    --with-http_random_index_module \
+    --with-http_gunzip_module \
+    --with-http_v2_module \
+    --with-http_slice_module \
+	--add-module=/usr/src/nginx-rtmp-module \
+	--add-module=/usr/src/ngx_devel_kit \
+	--add-module=/usr/src/lua-nginx-module \
+	--add-module=/usr/src/echo-nginx-module \
+	--add-module=/usr/src/nginx-ts-module \
+    --add-module=/usr/src/nginx-module-vts \
+    --add-module=/usr/src/nginx-module-stream-sts \
+    --add-module=/usr/src/nginx-module-sts \
+    --add-module=/usr/src/naxsi/naxsi_src \
+    --add-module=/usr/src/nginx-vod-module \
+    --add-module=/usr/src/njs/nginx \
+    --add-module=/usr/src/ModSecurity-nginx \
+    --add-module=/usr/src/headers-more-nginx-module \
+    --add-module=/usr/src/ngx_http_dyups_module \
+    --add-module=/usr/src/lua-upstream-nginx-module \
+    --add-module=/usr/src/nginx_upstream_check_module \
+    --add-module=/usr/src/nginx-sticky-module-ng \
+    --add-module=/usr/src/status-nginx-module \
+    --add-module=/usr/src/nginx-opentracing/opentracing \
     && make -j$(nproc) \
     && make install \
     && cp -rf /usr/src/lua-resty-core/lib/* /usr/local/share/lua/5.1/ \
     && cp -rf /usr/src/lua-resty-lrucache/lib/* /usr/local/share/lua/5.1/ \
-    && rm -rf /usr/src/*  
+    && wget https://github.com/jaegertracing/jaeger-client-cpp/releases/download/v0.4.2/libjaegertracing_plugin.linux_amd64.so -O /usr/local/lib/libjaegertracing_plugin.so \
+    && wget -O - https://github.com/lightstep/lightstep-tracer-cpp/releases/download/v0.8.1/linux-amd64-liblightstep_tracer_plugin.so.gz | gunzip -c > /usr/local/lib/liblightstep_tracer_plugin.so \
+    && wget -O - https://github.com/rnburn/zipkin-cpp-opentracing/releases/download/v0.5.2/linux-amd64-libzipkin_opentracing_plugin.so.gz | gunzip -c > /usr/local/lib/libzipkin_opentracing_plugin.so \
+    && wget -O - https://github.com/DataDog/dd-opentracing-cpp/releases/download/v0.3.0/linux-amd64-libdd_opentracing_plugin.so.gz | gunzip -c > /usr/local/lib/libdd_opentracing_plugin.so \
+    && rm -rf /usr/src/* 
 
 RUN echo "Compiling nasm" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
@@ -138,7 +162,7 @@ RUN echo "Compiling nasm" \
     && make install \
     && echo "Compiling x264" \
     && cd /usr/src/ffmpeg_sources \
-    && git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264 \
+    && git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264 \
     && cd x264 \
     && PATH="/usr/bin:$PATH" PKG_CONFIG_PATH="/usr/ffmpeg_build/lib/pkgconfig" ./configure --prefix="/usr/ffmpeg_build" --bindir="/usr/bin" --enable-static \
     && PATH="/usr/bin:$PATH" make -j$(nproc) \
@@ -246,4 +270,3 @@ ADD . /scripts
 CMD ["/scripts/run.sh"]
 
 RUN chmod +x /scripts/run.sh
-

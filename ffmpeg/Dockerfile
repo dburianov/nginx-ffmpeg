@@ -67,7 +67,7 @@ ENV         FFMPEG_VERSION=3.3.9     \
 RUN echo "Compiling opencore-amr" \
     && mkdir -p /usr/src/ffmpeg_sources /usr/src/bin \
     && cd /usr/src/ffmpeg_sources \
-    && wget https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz \
+    && wget --no-check-certificate https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz \
     && tar -xzf opencore-amr-${OPENCOREAMR_VERSION}.tar.gz \
     && cd opencore-amr-${OPENCOREAMR_VERSION} \
     && ./configure --enable-shared \
